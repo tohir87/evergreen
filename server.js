@@ -19,9 +19,10 @@ var con = mysql.createConnection({
     database: db.database
   })
 
-  con.connect(function(err, database) {
+  con.connect(function(err) {
     if (err) return console.log(err)
-    require('./app/routes')(app, database);
+    
+    require('./app/routes')(app, con);
 
     app.listen(port, () => {
       console.log('We are live on ' + port);
