@@ -7,7 +7,7 @@ module.exports = {
     database    : 'oshc' 
   };
 
-  exports.getCountries = function(callback) {
+  exports.  = function(callback) {
     var sql = "SELECT * FROM countries";
     // get a connection from the pool
     pool.getConnection(function(err, connection) {

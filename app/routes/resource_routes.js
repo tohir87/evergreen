@@ -1,6 +1,8 @@
 // routes/resource_routes.js
 module.exports = function(app, db) {
-    app.get('/resource/countries', (req, res, next) => {
+    console.log(db)
+    app.get('/resource/countries', (req, res) => {
+        console.log("logging db", db)
         res.send('coming soon')
         // next()
     });
@@ -11,4 +13,6 @@ module.exports = function(app, db) {
         });
     }
 };
+
+
 
