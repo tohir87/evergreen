@@ -33,11 +33,11 @@ var con = mysql.createConnection({
 
     app.post('/create', (req, res) => {
       // create your note here
-      console.log(req.body.email)
       var email_ = req.body.email.trim()
       var amount_ = req.body.amount.trim()
       var first_name_ = req.body.first_name
       var last_name_ = req.body.last_name
+      var user_id
 
       console.log(email_, first_name_, last_name_)
 
@@ -55,10 +55,35 @@ var con = mysql.createConnection({
 
       // process data into db
       var sql = "INSERT INTO users (`first_name`, `last_name`, `email`, `password`) VALUES ('"+ first_name_ +"', '"+ last_name_ +"', '"+ email_ +"', '"+ password_ +"') "
-      con.query(sql, function (err, result) {
-        if (err) throw err;
-        console.log("1 record inserted");
+      con.query(sql,  (err, result) => {
+        if (err) {
+          res.status(500)
+          .send({
+            error: "sql_error",
+            message: err
+          })
+        }else{
+          console.log(result);
+
+          // insert into student info table
+          user_id = result.insertId
+
+          var sql_student_info = "INSERT INTO students_info (`user_id`, `passport_number`, `nationality_id`, `phone_number`, `gender_id`, `dateof_birth`) VALUES ('"+ user_id +"', '"+ req.body.passport_number +"', '"+ req.body.nationality_id +"', '"+ req.body.phone_number +"', '"+ req.body.gender_id +"', '"+ req.body.dob +"') "
+
+          con.query(sql_student_info, (err, result) => {
+            if (err) {
+             throw err
+            }else{
+              console.log("student info saved successfully")
+
+              // send notification email to applicant
+            }
+          })
+        }
       });
+
+      
+
 
 
       res.send('Welcome to ISO API')
