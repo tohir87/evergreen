@@ -53,9 +53,15 @@ var con = mysql.createConnection({
 
       var password_ = "$2y$10$6gzJEANs0sotSm2R9ArxwOB/Hx8rQ9nSd9ly6Od/QLcAjdIJGDitm"
 
+      var user_data = {
+        first_name : first_name_,
+        last_name : last_name_,
+        email : email_,
+        password : password_
+      }
+
       // process data into db
-      var sql = "INSERT INTO users (`first_name`, `last_name`, `email`, `password`) VALUES ('"+ first_name_ +"', '"+ last_name_ +"', '"+ email_ +"', '"+ password_ +"') "
-      con.query(sql,  (err, result) => {
+      con.query("INSERT INTO users SET ?", user_data,  (err, result) => {
         if (err) {
           res.status(500)
           .send({
@@ -68,9 +74,16 @@ var con = mysql.createConnection({
           // insert into student info table
           user_id = result.insertId
 
-          var sql_student_info = "INSERT INTO students_info (`user_id`, `passport_number`, `nationality_id`, `phone_number`, `gender_id`, `dateof_birth`) VALUES ('"+ user_id +"', '"+ req.body.passport_number +"', '"+ req.body.nationality_id +"', '"+ req.body.phone_number +"', '"+ req.body.gender_id +"', '"+ req.body.dob +"') "
+          var student_data = {
+            user_id : result.insertId,
+            passport_number : req.body.passport_number,
+            nationality_id : req.body.nationality_id,
+            phone_number : req.body.phone_number,
+            gender_id : req.body.gender_id,
+            dateof_birth : req.body.dob
+          }
 
-          con.query(sql_student_info, (err, result) => {
+          con.query("INSERT INTO students_info SET ?", student_data, (err, result) => {
             if (err) {
              throw err
             }else{
@@ -82,11 +95,12 @@ var con = mysql.createConnection({
         }
       });
 
-      
 
-
-
-      res.send('Welcome to ISO API')
+      res.status(200)
+      .send({
+        status : "OK",
+        mmessage : "Operation completed successfully"
+      })
     });
 
     app.listen(port, () => {
